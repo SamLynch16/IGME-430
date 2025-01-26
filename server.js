@@ -14,7 +14,7 @@ app.get('/client2', (req, res) => {
 });
 
 // Serve static files (like images, CSS, JS)
-app.use(express.static(path.join('Simple-HTTP-Assignment', 'public')));
+app.use(express.static(path.join(__dirname', 'public')));
 
 
 // Start the server
