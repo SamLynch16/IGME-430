@@ -1,12 +1,22 @@
-// server.js
 const express = require('express');
+const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
+// Serve client1.html when accessing /client1
+app.get('/client1', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client1.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Serve client2.html when accessing /client2
+app.get('/client2', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client2.html'));
+});
+
+// Serve static files (like images, CSS, JS)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
