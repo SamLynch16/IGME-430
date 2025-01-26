@@ -5,16 +5,17 @@ const port = process.env.PORT || 3000;
 
 // Serve client1.html when accessing /client1
 app.get('/client1', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client1.html')); // Corrected path
+  res.sendFile(path.join(__dirname, 'client1.html')); 
 });
 
 // Serve client2.html when accessing /client2
 app.get('/client2', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client2.html')); // Corrected path
+  res.sendFile(path.join(__dirname, 'client2.html')); 
 });
 
 // Serve static files (like images, CSS, JS)
-app.use(express.static(path.join(__dirname, 'public'))); // Corrected path
+app.use(express.static(path.join('Simple-HTTP-Assignment', 'public')));
+
 
 // Start the server
 app.listen(port, () => {
