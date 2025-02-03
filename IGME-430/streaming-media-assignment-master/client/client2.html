@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Simple Audio Stream</title>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 auto;
+            padding-top: 19%;
+            font-size: 2.6em;
+        }
+
+        .audio-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80%;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .links a {
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="audio-container">
+        <audio controls autoplay>
+            <source src="bling.mp3" type="audio/mpeg">
+            Your browser does not support the audio tag.
+        </audio>
+    </div>
+    
+    <div class="links">
+        <a href="/client.html">Go to Page 1 (Video)</a>
+        <a href="/client3.html">Go to Page 3 (Video)</a>
+    </div>
+</body>
+</html>
