@@ -17,44 +17,43 @@ window.addEventListener('DOMContentLoaded', () => {
     const page = pageSelect.value;
     const type = typeSelect.value;
     let queryParam = '';
-
-    // Handle unauthorized page with query parameter
+    
     if (page === '/unauthorized') {
-      queryParam = '?loggedIn=no'; // Change query parameter based on your test
+      queryParam = '?loggedIn=no'; 
     }
 
     console.log(`Fetching: ${page + queryParam} with Accept header: ${type}`);
 
-    // Fetch the response from the server
+   
     fetch(page + queryParam, {
       method: 'GET',
       headers: {
-        'Accept': type // Set the Accept header to either JSON or XML
+        'Accept': type
       }
     })
     .then(response => {
       console.log(`Received response with status: ${response.status}`);
 
-      // Handle response for error status codes (400, 401, etc.)
+   
       if (!response.ok) {
         return response.text().then(data => {
-          // Strip out any status code and extra information at the end of the message
-          const errorMessage = data.replace(/\d{3}.*$/, '').trim(); // Regex to remove 3 digits and anything following it
+          
+          const errorMessage = data.replace(/\d{3}.*$/, '').trim(); 
           const formattedErrorMessage = `Error ${response.status}: ${errorMessage || 'No message'}`;
           throw new Error(formattedErrorMessage);
         });
       }
 
-      // Process JSON or XML responses
+      
       if (type === 'application/json') {
-        return response.json(); // Parse JSON response
+        return response.json();
       } else if (type === 'text/xml') {
-        return response.text(); // Return XML response as text
+        return response.text();
       }
     })
     .then(data => {
-      console.log('Response data:', data); // Log the response data
-      contentSection.innerHTML = ''; // Clear any previous content
+      console.log('Response data:', data); 
+      contentSection.innerHTML = ''; 
 
       // Display status message in bold
       const statusMessage = document.createElement('p');
@@ -65,21 +64,21 @@ window.addEventListener('DOMContentLoaded', () => {
       // Handle JSON response
       if (type === 'application/json') {
         const jsonMessage = document.createElement('p');
-        jsonMessage.textContent = `Message: ${data.message || 'No message'}`; // Show the message from the JSON response
+        jsonMessage.textContent = `Message: ${data.message || 'No message'}`;
         contentSection.appendChild(jsonMessage);
         const jsonId = document.createElement('p');
-        jsonId.textContent = `ID: ${data.id || 'No ID found'}`; // Show ID if it exists
+        jsonId.textContent = `ID: ${data.id || 'No ID found'}`; 
         contentSection.appendChild(jsonId);
       }
 
-      // Handle XML response
+    
       if (type === 'text/xml') {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(data, 'text/xml');
         const message = xmlDoc.getElementsByTagName('message')[0]?.textContent || 'No message found';
         const id = xmlDoc.getElementsByTagName('id')[0]?.textContent;
 
-        // Display the XML message in a user-friendly way
+       
         const xmlMessage = document.createElement('p');
         xmlMessage.textContent = `Message: ${message}`;
         const xmlId = document.createElement('p');
@@ -89,7 +88,7 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     })
     .catch(error => {
-      console.log('Error:', error); // Log any error that occurs
+      console.log('Error:', error);
       contentSection.innerHTML = `<p><strong>${pageSelect.options[pageSelect.selectedIndex].text}</strong></p><p>${error.message}</p>`;
     });
   });

@@ -18,10 +18,10 @@ export default [
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
-    // Specify the React version
+    
     settings: {
       react: {
-        version: "detect",  // Automatically detect the React version from your package.json
+        version: "detect", 
       },
     },
   },
