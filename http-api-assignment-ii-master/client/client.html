@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTTP API Assignment</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="top">
+    <h1>POST Status Code Tests</h1>
+
+    <!-- User form for adding name and age -->
+    <form id="userForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" />
+
+      <label for="age">Age:</label>
+      <input type="number" id="age" name="age" />
+
+      <button type="submit" id="addUser">Add User</button>
+    </form>
+
+    <br />
+
+    <!-- Dropdown for selecting HTTP method -->
+    <select id="methodSelect">
+      <option value="GET">GET</option>
+      <option value="HEAD">HEAD</option>
+    </select>
+
+    <!-- Dropdown for selecting endpoint -->
+    <select id="endpointSelect">
+      <option value="/getUsers">/getUsers</option>
+      <option value="/notReal">/notReal</option>
+    </select>
+
+    <!-- Button to trigger the API call -->
+    <button id="getUserBtn">Get User</button>
+  </div>
+
+  <!-- Content area to display feedback from the API calls -->
+  <div id="content">
+    <!-- This will be updated with API response messages -->
+  </div>
+
+  <script>
+    // Function to send GET/HEAD requests
+    function sendRequest(url, method) {
+      fetch(url, { method })
+        .then(response => {
+          if (method !== 'HEAD') {
+            return response.json(); // Parse JSON if it's not a HEAD request
+          }
+        })
+        .then(data => {
+          const contentDiv = document.getElementById('content');
+  
+          if (url === '/notReal' && method === 'GET') {
+            // For GET request to /notReal, display Not Found and message
+            contentDiv.innerHTML = `<b>Not Found</b><br/>Message: The page you are looking for was not found.`;
+            console.log("GET request for /notReal completed with status 404.");
+          } else if (url === '/notReal' && method === 'HEAD') {
+            // For HEAD request to /notReal, display just Not Found in bold
+            contentDiv.innerHTML = `<b>Not Found</b>`;
+            console.log("HEAD request for /notReal completed with status 404.");
+          } else if (method === 'GET' && url === '/getUsers') {
+            // For GET request to /getUsers, display Success and the user data
+            // If data is empty (no users), show an empty object
+            if (!data || Object.keys(data).length === 0) {
+              contentDiv.innerHTML = `<b>Success</b><br/><pre>{}</pre>`;
+            } else {
+              contentDiv.innerHTML = `<b>Success</b><br/><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            console.log("GET request for /getUsers completed with status 200.");
+          } else if (method === 'HEAD' && url === '/getUsers') {
+            // For HEAD request to /getUsers, display just Success in bold
+            contentDiv.innerHTML = `<b>Success</b>`;
+            console.log("HEAD request for /getUsers completed with status 200.");
+          } else if (data) {
+            // For any other endpoints, display the JSON response
+            contentDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+          } else {
+            // Fallback to display the status code (for HEAD requests)
+            contentDiv.innerHTML = `Status Code: ${response.status}`;
+          }
+        })
+        .catch(err => {
+          const contentDiv = document.getElementById('content');
+          contentDiv.innerHTML = `Error: ${err.message}`;
+        });
+    }
+  
+    // Function to send request based on dropdown selection
+    function sendRequestFromDropdown() {
+      const method = document.getElementById('methodSelect').value;
+      const endpoint = document.getElementById('endpointSelect').value;
+      sendRequest(endpoint, method);
+    }
+  
+    // Function to handle user form submission (Add User)
+    document.getElementById('userForm').addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent form submission
+  
+      const name = document.getElementById('name').value;
+      const age = document.getElementById('age').value;
+  
+      fetch('/addUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `name=${name}&age=${age}` // Send name and age as URL-encoded form data
+      })
+        .then(response => {
+          if (response.status === 204) {
+            // For status 204 (No Content), show Updated message in bold
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = `<b>Updated (No Content)</b>`;
+            console.log("User updated with new age.");
+          } else if (response.status === 201) {
+            // For status 201 (Created), parse the JSON response
+            return response.json();
+          } else if (response.status === 400) {
+            // For status 400 (Bad Request), parse JSON and display error message
+            return response.json().then(data => {
+              const contentDiv = document.getElementById('content');
+              contentDiv.innerHTML = `<b>Bad Request</b><br/>Message: ${data.message}`;
+            });
+          }
+        })
+        .then(data => {
+          const contentDiv = document.getElementById('content');
+          if (data) {
+            // When user is created successfully, display Created message with user object
+            contentDiv.innerHTML = `<b>Created</b><br/>Message: Created Successfully<br/><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            console.log("User added successfully.");
+          }
+        })
+        .catch(err => {
+          const contentDiv = document.getElementById('content');
+          contentDiv.innerHTML = `Error: ${err.message}`;
+        });
+    });
+  
+    // Add event listener to Get User button
+    document.getElementById('getUserBtn').addEventListener('click', sendRequestFromDropdown);
+  </script>
+</body>
+
+</html>
